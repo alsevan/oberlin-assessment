@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Senior Project Assessment — Oberlin Conservatory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#1a1917;--sage:#4a6741;--sage-light:#e8f0e6;
+    --warm:#c8a96e;--warm-light:#fdf5e8;--rule:rgba(26,25,23,0.12);
+    --font-serif:'DM Serif Display',Georgia,serif;
+    --font-sans:'DM Sans',sans-serif
+  }
+  body{font-family:var(--font-sans);color:var(--ink);background:#faf8f4;min-height:100vh;padding:2rem 1rem}
+  .app{max-width:680px;margin:0 auto}
+  .screen{display:none}.screen.active{display:block}
+  h1{font-family:var(--font-serif);font-size:32px;font-weight:400;letter-spacing:-0.3px;color:var(--ink);margin-bottom:4px}
+  h2{font-family:var(--font-serif);font-size:24px;font-weight:400;margin-bottom:4px;color:var(--ink)}
+  .sub{font-size:13px;color:rgba(26,25,23,0.5);font-weight:300;margin-bottom:1.75rem}
+  .divider{height:1px;background:var(--rule);margin:1.5rem 0}
+  .section-label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(26,25,23,0.4);font-weight:500;margin-bottom:12px}
+  .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .role-card{border:1px solid var(--rule);border-radius:10px;padding:22px 20px;cursor:pointer;background:white;transition:all 0.15s;text-align:left}
+  .role-card:hover{border-color:var(--sage);background:var(--sage-light);transform:translateY(-1px)}
+  .rc-title{font-size:16px;font-weight:500;margin-bottom:4px;color:var(--ink)}
+  .rc-sub{font-size:12px;color:rgba(26,25,23,0.45);font-weight:300;line-height:1.5}
+  .btn{display:inline-block;padding:10px 22px;border-radius:7px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-sans);border:none;transition:all 0.15s}
+  .btn-sage{background:var(--sage);color:white}.btn-sage:hover{background:#3a5332}
+  .btn-outline{background:white;border:1px solid var(--rule);color:var(--ink);cursor:pointer}.btn-outline:hover{border-color:var(--sage);background:var(--sage-light)}
+  .btn:disabled{opacity:0.35;cursor:not-allowed}
+  .student-input-row{display:flex;gap:8px;margin-bottom:8px}
+  .student-input-row input{flex:1;border:1px solid var(--rule);border-radius:7px;padding:10px 13px;font-size:14px;font-family:var(--font-sans);background:white;color:var(--ink);outline:none;transition:border-color 0.15s}
+  .student-input-row input:focus{border-color:var(--sage)}
+  .student-input-row .del-btn{border:1px solid var(--rule);background:white;border-radius:7px;padding:10px 14px;cursor:pointer;font-size:13px;color:rgba(26,25,23,0.35);transition:all 0.12s}
+  .student-input-row .del-btn:hover{background:#fdf0f0;border-color:#e0a0a0;color:#c05050}
+  .admin-tabs{display:flex;border-bottom:1px solid var(--rule);margin-bottom:1.5rem}
+  .a-tab{padding:10px 20px;font-size:13px;cursor:pointer;border-bottom:2px solid transparent;color:rgba(26,25,23,0.45);transition:all 0.12s;margin-bottom:-1px}
+  .a-tab.active{color:var(--ink);border-bottom-color:var(--sage);font-weight:500}
+  .year-selector{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;background:var(--warm-light);border:1px solid rgba(200,169,110,0.25);border-radius:8px;padding:12px 16px}
+  .year-selector label{font-size:13px;color:rgba(26,25,23,0.5);font-weight:300}
+  .year-selector select{border:1px solid var(--rule);border-radius:6px;padding:6px 10px;font-size:14px;font-family:var(--font-sans);background:white;color:var(--ink);outline:none;cursor:pointer}
+  .faculty-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.5rem}
+  .fac-btn{border:1px solid var(--rule);border-radius:9px;padding:16px 10px;cursor:pointer;background:white;font-family:var(--font-sans);font-size:14px;text-align:center;color:var(--ink);transition:all 0.15s;line-height:1.3}
+  .fac-btn:hover{border-color:var(--sage);background:var(--sage-light);transform:translateY(-1px)}
+  .fac-btn.done{border-color:var(--sage);background:var(--sage-light)}
+  .done-mark{display:block;font-size:10px;color:var(--sage);font-weight:500;margin-top:4px}
+  .student-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
+  .s-tab{padding:6px 14px;border-radius:20px;border:1px solid var(--rule);font-size:12px;cursor:pointer;background:white;color:rgba(26,25,23,0.5);transition:all 0.12s;font-family:var(--font-sans)}
+  .s-tab.done{border-color:var(--sage);color:var(--sage);background:var(--sage-light)}
+  .s-tab.cur{border-color:var(--ink);color:var(--ink);font-weight:500;background:white}
+  .scoring-card{border:1px solid var(--rule);border-radius:12px;padding:1.75rem;background:white;margin-bottom:1rem;box-shadow:0 1px 4px rgba(26,25,23,0.04)}
+  .sc-name{font-family:var(--font-serif);font-size:20px;margin-bottom:1.25rem;color:var(--ink)}
+  .cat-row{display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--rule)}
+  .cat-row:last-child{border-bottom:none}
+  .cat-name{flex:1;font-size:13px;color:rgba(26,25,23,0.6);font-weight:300;line-height:1.4}
+  .score-group{display:flex;gap:6px}
+  .sc-btn{width:40px;height:40px;border-radius:7px;border:1px solid var(--rule);background:white;font-size:14px;cursor:pointer;font-family:var(--font-sans);color:var(--ink);transition:all 0.12s}
+  .sc-btn:hover{background:var(--sage-light);border-color:var(--sage)}
+  .sc-btn.sel{background:var(--sage);border-color:var(--sage);color:white;font-weight:500}
+  .progress-strip{display:flex;gap:5px;margin-bottom:1.5rem}
+  .pip{height:4px;flex:1;border-radius:2px;background:var(--rule);transition:background 0.25s}
+  .pip.done{background:var(--sage)}.pip.cur{background:var(--warm)}
+  .nav-btns{display:flex;justify-content:space-between;align-items:center;margin-top:0.75rem}
+  .rtable{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:2rem}
+  .rtable th{text-align:left;padding:8px 9px;color:rgba(26,25,23,0.45);font-weight:400;border-bottom:1px solid var(--rule);font-size:11px;letter-spacing:0.05em}
+  .rtable td{padding:8px 9px;border-bottom:1px solid rgba(26,25,23,0.05)}
+  .rtable tr:last-child td{border-bottom:none}
+  .avg-pill{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:500}
+  .p-hi{background:#e8f0e6;color:#3a5332}.p-mid{background:#fdf5e8;color:#7a5510}.p-lo{background:#fdeaea;color:#9b2020}
+  .discuss-tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:8px;background:#fdf0e0;color:#9a6010;font-weight:500}
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.75rem}
+  .stat-box{background:var(--warm-light);border:1px solid rgba(200,169,110,0.25);border-radius:9px;padding:16px}
+  .stat-box .sv{font-family:var(--font-serif);font-size:28px;color:var(--ink)}
+  .stat-box .sl{font-size:11px;color:rgba(26,25,23,0.45);margin-top:3px;font-weight:300}
+  .rs-name{font-family:var(--font-serif);font-size:18px;margin:1.5rem 0 10px;padding-bottom:8px;border-bottom:1px solid var(--rule)}
+  .submitted-wrap{text-align:center;padding:3rem 0}
+  .check-circle{width:60px;height:60px;border-radius:50%;background:var(--sage-light);border:1px solid rgba(74,103,65,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem}
+  .loading-msg{font-size:13px;color:rgba(26,25,23,0.4);padding:1.5rem 0;display:flex;align-items:center;gap:8px}
+  .spinner{width:14px;height:14px;border:2px solid var(--rule);border-top-color:var(--sage);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .sync-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:10px;background:var(--sage-light);color:var(--sage);opacity:0;transition:opacity 0.3s;margin-left:10px;vertical-align:middle}
+  .sync-pill.show{opacity:1}
+  .warn-box{background:#fdf5e8;border:1px solid rgba(200,169,110,0.4);border-radius:8px;padding:13px 16px;font-size:13px;color:#7a5510;margin-bottom:1rem;line-height:1.6}
+  .link-box{display:flex;gap:8px;align-items:center;background:white;border:1px solid rgba(74,103,65,0.2);border-radius:8px;padding:12px 14px;margin-bottom:1rem}
+  .link-box code{flex:1;font-size:12px;color:var(--sage);word-break:break-all;line-height:1.5}
+  .copy-btn{background:var(--sage-light);border:1px solid rgba(74,103,65,0.3);border-radius:6px;padding:7px 13px;font-size:12px;cursor:pointer;color:var(--sage);font-family:var(--font-sans);white-space:nowrap;transition:all 0.12s}
+  .copy-btn:hover{background:var(--sage);color:white}
+  .badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;margin-left:6px}
+  .badge-done{background:var(--sage-light);color:var(--sage);border:1px solid rgba(74,103,65,0.3)}
+  .badge-pending{background:#f5f0e8;color:#8a6820;border:1px solid rgba(138,104,32,0.2)}
+  .status-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--rule);font-size:14px}
+  .status-row:last-child{border-bottom:none}
+  .error-box{background:#fdeaea;border:1px solid rgba(155,32,32,0.2);border-radius:8px;padding:13px 16px;font-size:13px;color:#9b2020;margin-bottom:1rem;line-height:1.6}
+  @media(max-width:480px){
+    .role-grid{grid-template-columns:1fr}
+    .faculty-grid{grid-template-columns:repeat(2,1fr)}
+    .stat-row{grid-template-columns:1fr 1fr}
+    .stat-row .stat-box:last-child{grid-column:span 2}
+    h1{font-size:26px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen active">
+    <h1>Senior Project Assessment</h1>
+    <p class="sub">Oberlin Conservatory · <span id="home-year"></span></p>
+    <div style="margin-bottom:1.5rem"></div>
+    <div class="section-label">I am</div>
+    <div class="role-grid">
+      <div class="role-card" onclick="go('screen-admin')">
+        <div class="rc-title">The coordinator</div>
+        <div class="rc-sub">Manage students, share links, view results</div>
+      </div>
+      <div class="role-card" onclick="go('screen-faculty-select')">
+        <div class="rc-title">A faculty member</div>
+        <div class="rc-sub">Submit my assessment scores</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div id="screen-admin" class="screen">
+    <h2>Coordinator panel</h2>
+    <p class="sub">Scores sync to Supabase in real time across all devices.</p>
+    <div class="admin-tabs">
+      <div class="a-tab active" onclick="adminTab(this,'tab-students')">Students</div>
+      <div class="a-tab" onclick="adminTab(this,'tab-links')">Faculty links</div>
+      <div class="a-tab" onclick="adminTab(this,'tab-results')">Results</div>
+    </div>
+    <div id="tab-students">
+      <div class="year-selector">
+        <label>Academic year</label>
+        <select id="admin-year-select" onchange="loadAdminStudents()"></select>
+      </div>
+      <div class="section-label">Student roster</div>
+      <div id="student-list"></div>
+      <div class="student-input-row" style="margin-top:6px">
+        <input id="new-student-input" type="text" placeholder="Add student name…" onkeydown="if(event.key==='Enter')addStudent()">
+        <button class="btn btn-sage" onclick="addStudent()">Add</button>
+      </div>
+      <div style="margin-top:1.5rem">
+        <button class="btn btn-outline" onclick="adminTab(document.querySelectorAll('.a-tab')[1],'tab-links')">Next: faculty links →</button>
+      </div>
+    </div>
+    <div id="tab-links" style="display:none">
+      <div class="warn-box">Share the URL of this page with all faculty. They open it, tap "A faculty member," and select their name. Scores go directly to Supabase.</div>
+      <div class="link-box">
+        <code id="share-url">Copy the URL from your browser's address bar</code>
+        <button class="copy-btn" onclick="copyLink()">Copy</button>
+      </div>
+      <div class="section-label" style="margin-top:1.5rem">Submission status</div>
+      <div id="status-list"><div class="loading-msg"><div class="spinner"></div>Loading…</div></div>
+    </div>
+    <div id="tab-results" style="display:none">
+      <div class="year-selector">
+        <label>View year</label>
+        <select id="results-year-select" onchange="renderResults()"></select>
+      </div>
+      <div id="results-area"><div class="loading-msg"><div class="spinner"></div>Loading scores…</div></div>
+    </div>
+    <div class="divider"></div>
+    <button class="btn btn-outline" onclick="go('screen-home')">← Back</button>
+  </div>
+
+  <!-- FACULTY SELECT -->
+  <div id="screen-faculty-select" class="screen">
+    <h2>Welcome</h2>
+    <p class="sub">Select your name to begin scoring for <strong id="faculty-year-label"></strong>.</p>
+    <div class="faculty-grid" id="faculty-grid"></div>
+    <div class="divider"></div>
+    <button class="btn btn-outline" onclick="go('screen-home')">← Back</button>
+  </div>
+
+  <!-- SCORING -->
+  <div id="screen-scoring" class="screen">
+    <div style="display:flex;align-items:center;margin-bottom:4px">
+      <h2 id="scoring-title">Scoring</h2>
+      <span class="sync-pill" id="sync-pill">✓ saved</span>
+    </div>
+    <p class="sub">Rate each student 1–4 on all five categories.</p>
+    <div class="progress-strip" id="prog-strip"></div>
+    <div class="student-tabs" id="student-tabs"></div>
+    <div id="scoring-card-area"></div>
+    <div class="nav-btns">
+      <span id="nav-incomplete" style="font-size:12px;color:rgba(26,25,23,0.4)"></span>
+      <button class="btn btn-sage" id="submit-btn" onclick="submitScores()" disabled>Submit all scores</button>
+    </div>
+  </div>
+
+  <!-- SUBMITTED -->
+  <div id="screen-submitted" class="screen">
+    <div class="submitted-wrap">
+      <div class="check-circle">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4a6741" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h2 style="margin-bottom:10px">Scores submitted</h2>
+      <p id="submitted-msg" style="font-size:14px;color:rgba(26,25,23,0.5);max-width:360px;margin:0 auto;font-weight:300;line-height:1.7"></p>
+    </div>
+    <div class="divider"></div>
+    <button class="btn btn-outline" onclick="go('screen-home')">← Home</button>
+  </div>
+
+</div>
+
+<script>
+const SUPABASE_URL = 'https://yqnwvycdcxiindypjtle.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlxbnd2eWNkY3hpaW5keXBqdGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODE2ODQsImV4cCI6MjA5MjM1NzY4NH0.4P3vaJVDaVX9xlPkYLqPzEHwV7GtbFvw9WTYjNx94zw';
+const FACULTY = ['Alysia','Ann','Al','Talawa','Holly'];
+const CATS = ['Integration with Focused Study','Project & Concept','Process','Outcomes','Reflection'];
+const CURRENT_YEAR = new Date().getFullYear();
+
+let curFaculty = null;
+let curStudentIdx = 0;
+let localScores = {};
+let cachedStudents = [];
+let cachedAllScores = [];
+
+/* ── SUPABASE ── */
+async function sb(table, method='GET', body=null, params='') {
+  const opts = {
+    method,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}${params}`, opts);
+  if (method === 'GET') return res.json();
+  return res;
+}
+
+async function fetchStudents(year) {
+  const data = await sb('students','GET',null,`?year=eq.${year}&order=name`);
+  cachedStudents = Array.isArray(data) ? data : [];
+  return cachedStudents;
+}
+async function addStudentDB(name, year) {
+  await sb('students','POST',{name,year});
+}
+async function deleteStudentDB(id) {
+  await sb('students','DELETE',null,`?id=eq.${id}`);
+}
+async function fetchScores(year) {
+  const data = await sb('scores','GET',null,`?year=eq.${year}`);
+  cachedAllScores = Array.isArray(data) ? data : [];
+  return cachedAllScores;
+}
+async function upsertScore(year, faculty, student, category, score) {
+  await sb('scores','POST',{year,faculty,student,category,score});
+}
+
+function isFacultyDone(faculty, students, scores) {
+  if (!students.length) return false;
+  return students.every(s => CATS.every(c => scores.some(r => r.faculty===faculty && r.student===s.name && r.category===c)));
+}
+
+/* ── YEARS ── */
+function getYears() {
+  const yrs = [];
+  for (let y = CURRENT_YEAR; y >= CURRENT_YEAR - 6; y--) yrs.push(y);
+  return yrs;
+}
+function populateYearSelects() {
+  const yrs = getYears();
+  ['admin-year-select','results-year-select'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = yrs.map(y => `<option value="${y}" ${y===CURRENT_YEAR?'selected':''}>${y}–${String(y+1).slice(2)}</option>`).join('');
+  });
+}
+function getAdminYear() { return parseInt(document.getElementById('admin-year-select').value); }
+function getResultsYear() { return parseInt(document.getElementById('results-year-select').value); }
+
+/* ── NAV ── */
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 'screen-admin') initAdmin();
+  if (id === 'screen-faculty-select') initFacultySelect();
+}
+
+function adminTab(el, tabId) {
+  document.querySelectorAll('.a-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['tab-students','tab-links','tab-results'].forEach(t => {
+    document.getElementById(t).style.display = t === tabId ? 'block' : 'none';
+  });
+  if (tabId === 'tab-links') renderLinks();
+  if (tabId === 'tab-results') renderResults();
+}
+
+/* ── ADMIN ── */
+async function initAdmin() {
+  populateYearSelects();
+  await loadAdminStudents();
+}
+async function loadAdminStudents() {
+  const year = getAdminYear();
+  document.getElementById('student-list').innerHTML = '<div class="loading-msg"><div class="spinner"></div>Loading…</div>';
+  const students = await fetchStudents(year);
+  renderStudentList(students);
+}
+function renderStudentList(students) {
+  const el = document.getElementById('student-list');
+  if (!students.length) {
+    el.innerHTML = '<p style="font-size:13px;color:rgba(26,25,23,0.4);margin-bottom:10px">No students added yet for this year.</p>';
+    return;
+  }
+  el.innerHTML = students.map(s =>
+    `<div class="student-input-row">
+      <input type="text" value="${s.name}" readonly style="flex:1;border:1px solid var(--rule);border-radius:7px;padding:10px 13px;font-size:14px;font-family:var(--font-sans);background:white;color:var(--ink);outline:none">
+      <button class="del-btn" onclick="removeStudent(${s.id})">✕</button>
+    </div>`
+  ).join('');
+}
+async function addStudent() {
+  const inp = document.getElementById('new-student-input');
+  const name = inp.value.trim(); if (!name) return;
+  const year = getAdminYear();
+  inp.value = ''; inp.disabled = true;
+  await addStudentDB(name, year);
+  inp.disabled = false; inp.focus();
+  await loadAdminStudents();
+}
+async function removeStudent(id) {
+  await deleteStudentDB(id);
+  await loadAdminStudents();
+}
+
+/* ── LINKS ── */
+function renderLinks() {
+  const url = window.location.href;
+  document.getElementById('share-url').textContent = url;
+  loadStatusList();
+}
+async function loadStatusList() {
+  const year = getAdminYear();
+  const [students, scores] = await Promise.all([fetchStudents(year), fetchScores(year)]);
+  document.getElementById('status-list').innerHTML = FACULTY.map(f => {
+    const done = isFacultyDone(f, students, scores);
+    return `<div class="status-row"><span style="font-weight:400">${f}</span><span class="badge ${done?'badge-done':'badge-pending'}">${done?'✓ submitted':'pending'}</span></div>`;
+  }).join('');
+}
+function copyLink() {
+  const url = window.location.href;
+  navigator.clipboard.writeText(url).then(() => {
+    const b = document.querySelector('.copy-btn');
+    b.textContent = '✓ Copied!';
+    setTimeout(() => b.textContent = 'Copy', 2000);
+  });
+}
+
+/* ── FACULTY SELECT ── */
+async function initFacultySelect() {
+  document.getElementById('faculty-year-label').textContent = `${CURRENT_YEAR}–${String(CURRENT_YEAR+1).slice(2)}`;
+  document.getElementById('faculty-grid').innerHTML = '<div class="loading-msg"><div class="spinner"></div>Loading…</div>';
+  const [students, scores] = await Promise.all([fetchStudents(CURRENT_YEAR), fetchScores(CURRENT_YEAR)]);
+  cachedStudents = students; cachedAllScores = scores;
+  const grid = document.getElementById('faculty-grid');
+  if (!students.length) {
+    grid.innerHTML = '<div class="warn-box">No students have been added yet. Please ask the coordinator to add students first.</div>';
+    return;
+  }
+  grid.innerHTML = FACULTY.map(f => {
+    const done = isFacultyDone(f, students, scores);
+    return `<button class="fac-btn ${done?'done':''}" onclick="startFaculty('${f}')">${f}${done?'<span class="done-mark">✓ submitted</span>':''}</button>`;
+  }).join('');
+}
+
+async function startFaculty(name) {
+  if (isFacultyDone(name, cachedStudents, cachedAllScores)) {
+    document.getElementById('submitted-msg').textContent = `${name}, your scores are already recorded. Thank you!`;
+    go('screen-submitted'); return;
+  }
+  curFaculty = name; curStudentIdx = 0; localScores = {};
+  cachedAllScores.filter(r => r.faculty===name).forEach(r => {
+    if (!localScores[r.student]) localScores[r.student] = {};
+    localScores[r.student][r.category] = r.score;
+  });
+  document.getElementById('scoring-title').textContent = `${name} — Scoring`;
+  buildScoringUI();
+  go('screen-scoring');
+}
+
+/* ── SCORING ── */
+function buildScoringUI() {
+  buildStrip(cachedStudents); buildTabs(cachedStudents); buildCard(cachedStudents); updateSubmitBtn(cachedStudents);
+}
+function buildStrip(students) {
+  document.getElementById('prog-strip').innerHTML = students.map((s,i) => {
+    const done = CATS.every(c => localScores[s.name] && localScores[s.name][c]);
+    return `<div class="pip ${done?'done':i===curStudentIdx?'cur':''}"></div>`;
+  }).join('');
+}
+function buildTabs(students) {
+  document.getElementById('student-tabs').innerHTML = students.map((s,i) => {
+    const done = CATS.every(c => localScores[s.name] && localScores[s.name][c]);
+    return `<div class="s-tab ${done?'done':''} ${i===curStudentIdx?'cur':''}" onclick="gotoStudent(${i})">${s.name.split(' ')[0]}</div>`;
+  }).join('');
+}
+function buildCard(students) {
+  const s = students[curStudentIdx].name;
+  if (!localScores[s]) localScores[s] = {};
+  let html = `<div class="scoring-card"><p class="sc-name">${s}</p>`;
+  CATS.forEach(cat => {
+    const cur = localScores[s] && localScores[s][cat];
+    const catSafe = cat.replace(/'/g,"\\'").replace(/&/g,'and');
+    const sSafe = s.replace(/'/g,"\\'");
+    html += `<div class="cat-row"><span class="cat-name">${cat}</span><div class="score-group">`;
+    [1,2,3,4].forEach(n => {
+      html += `<button class="sc-btn ${cur==n?'sel':''}" onclick="setScore('${sSafe}','${catSafe}',${n})">${n}</button>`;
+    });
+    html += '</div></div>';
+  });
+  html += '</div>';
+  let nav = '<div style="display:flex;justify-content:space-between;gap:8px">';
+  nav += curStudentIdx > 0
+    ? `<button class="btn btn-outline" onclick="gotoStudent(${curStudentIdx-1})">← ${students[curStudentIdx-1].name.split(' ')[0]}</button>`
+    : '<span></span>';
+  nav += curStudentIdx < students.length-1
+    ? `<button class="btn btn-sage" onclick="gotoStudent(${curStudentIdx+1})">${students[curStudentIdx+1].name.split(' ')[0]} →</button>`
+    : '<span></span>';
+  nav += '</div>';
+  document.getElementById('scoring-card-area').innerHTML = html + nav;
+}
+function gotoStudent(i) { curStudentIdx = i; buildScoringUI(); }
+
+async function setScore(student, cat, val) {
+  if (!localScores[student]) localScores[student] = {};
+  localScores[student][cat] = val;
+  await upsertScore(CURRENT_YEAR, curFaculty, student, cat, val);
+  const pill = document.getElementById('sync-pill');
+  if (pill) { pill.classList.add('show'); setTimeout(() => pill.classList.remove('show'), 2000); }
+  buildScoringUI();
+}
+function updateSubmitBtn(students) {
+  const allDone = students.every(s => CATS.every(c => localScores[s.name] && localScores[s.name][c]));
+  document.getElementById('submit-btn').disabled = !allDone;
+  const missing = students.filter(s => !CATS.every(c => localScores[s.name] && localScores[s.name][c])).length;
+  document.getElementById('nav-incomplete').textContent = allDone ? '' : `${missing} student${missing>1?'s':''} incomplete`;
+}
+async function submitScores() {
+  const scores = await fetchScores(CURRENT_YEAR);
+  const submitted = FACULTY.filter(f => isFacultyDone(f, cachedStudents, scores)).length;
+  document.getElementById('submitted-msg').textContent = `${curFaculty}, your scores are saved. ${submitted} of ${FACULTY.length} faculty have now submitted.`;
+  go('screen-submitted');
+}
+
+/* ── RESULTS ── */
+async function renderResults() {
+  const area = document.getElementById('results-area');
+  area.innerHTML = '<div class="loading-msg"><div class="spinner"></div>Loading from Supabase…</div>';
+  const year = getResultsYear();
+  const [students, scores] = await Promise.all([fetchStudents(year), fetchScores(year)]);
+  const submitters = FACULTY.filter(f => isFacultyDone(f, students, scores));
+  if (!students.length) { area.innerHTML = '<p style="font-size:14px;color:rgba(26,25,23,0.45)">No students found for this year.</p>'; return; }
+  if (!submitters.length) { area.innerHTML = '<p style="font-size:14px;color:rgba(26,25,23,0.45)">No faculty have submitted scores yet for this year.</p>'; return; }
+
+  let totalAvgs = [], discCount = 0, html = '';
+  students.forEach(student => {
+    html += `<p class="rs-name">${student.name}</p>`;
+    html += `<table class="rtable"><thead><tr><th>Category</th>${submitters.map(f=>`<th>${f}</th>`).join('')}<th>Avg</th><th></th></tr></thead><tbody>`;
+    CATS.forEach(cat => {
+      const vals = submitters.map(f => {
+        const r = scores.find(s => s.faculty===f && s.student===student.name && s.category===cat);
+        return r ? r.score : null;
+      }).filter(Boolean);
+      const avg = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+      const range = vals.length > 1 ? Math.max(...vals)-Math.min(...vals) : 0;
+      if (range >= 2) discCount++;
+      if (avg) totalAvgs.push(avg);
+      const cls = avg >= 3 ? 'p-hi' : avg >= 2 ? 'p-mid' : 'p-lo';
+      html += `<tr><td style="color:rgba(26,25,23,0.5);font-weight:300">${cat}</td>`;
+      submitters.forEach(f => {
+        const r = scores.find(s => s.faculty===f && s.student===student.name && s.category===cat);
+        html += `<td>${r ? r.score : '–'}</td>`;
+      });
+      html += `<td><span class="avg-pill ${cls}">${avg ? avg.toFixed(1):'–'}</span></td>`;
+      html += `<td>${range>=2?'<span class="discuss-tag">discuss</span>':''}</td></tr>`;
+    });
+    html += '</tbody></table>';
+  });
+
+  const deptAvg = totalAvgs.length ? (totalAvgs.reduce((a,b)=>a+b,0)/totalAvgs.length).toFixed(1) : '—';
+  area.innerHTML = `<div class="stat-row">
+    <div class="stat-box"><div class="sv">${submitters.length}/${FACULTY.length}</div><div class="sl">Faculty submitted</div></div>
+    <div class="stat-box"><div class="sv">${deptAvg}</div><div class="sl">Dept. avg score</div></div>
+    <div class="stat-box"><div class="sv">${discCount}</div><div class="sl">Items to discuss</div></div>
+  </div>` + html;
+}
+
+/* ── INIT ── */
+document.getElementById('home-year').textContent = `${CURRENT_YEAR}–${String(CURRENT_YEAR+1).slice(2)}`;
+populateYearSelects();
+</script>
+</body>
+</html>
