@@ -213,7 +213,11 @@ const SUPABASE_URL = 'https://yqnwvycdcxiindypjtle.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlxbnd2eWNkY3hpaW5keXBqdGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODE2ODQsImV4cCI6MjA5MjM1NzY4NH0.4P3vaJVDaVX9xlPkYLqPzEHwV7GtbFvw9WTYjNx94zw';
 const FACULTY = ['Alysia','Ann','Al','Talawa','Holly'];
 const CATS = ['Integration with Focused Study','Project & Concept','Process','Outcomes','Reflection'];
-const CURRENT_YEAR = new Date().getFullYear();
+// Academic year: fall semester starts the cycle.
+// If we're Jan–July, we're in the spring of the cycle that started last fall.
+// e.g. April 2026 → academic year 2025 (meaning 2025–26)
+const _now = new Date();
+const CURRENT_YEAR = _now.getMonth() < 7 ? _now.getFullYear() - 1 : _now.getFullYear();
 
 let curFaculty = null;
 let curStudentIdx = 0;
