@@ -101,6 +101,16 @@
     .stat-row .stat-box:last-child{grid-column:span 2}
     h1{font-size:26px}
   }
+  .rubric-toggle{display:flex;justify-content:space-between;align-items:center;padding:11px 15px;border:1px solid var(--rule);border-radius:8px;cursor:pointer;font-size:13px;color:rgba(26,25,23,0.6);background:white;margin-bottom:4px;transition:all 0.12s;user-select:none}
+  .rubric-toggle:hover{border-color:var(--sage);color:var(--sage);background:var(--sage-light)}
+  .rubric-table-wrap{overflow-x:auto;margin-bottom:1.25rem;border:1px solid var(--rule);border-radius:8px}
+  .rubric-table{width:100%;border-collapse:collapse;font-size:11.5px;min-width:600px}
+  .rubric-table th{background:var(--warm-light);padding:9px 10px;text-align:left;font-weight:500;font-size:10px;letter-spacing:0.05em;color:rgba(26,25,23,0.6);border-bottom:1px solid var(--rule);white-space:nowrap}
+  .rubric-table td{padding:9px 10px;border-bottom:1px solid rgba(26,25,23,0.06);vertical-align:top;line-height:1.5;color:rgba(26,25,23,0.7)}
+  .rubric-table tr:last-child td{border-bottom:none}
+  .rubric-table tr:hover td{background:rgba(26,25,23,0.015)}
+  .score-cell{font-family:var(--font-serif);font-size:18px;font-weight:400;text-align:center;white-space:nowrap;width:36px}
+  .s1{color:#9b2020}.s2{color:#7a5510}.s3{color:#3a5332}.s4{color:var(--sage)}
 </style>
 </head>
 <body>
@@ -184,6 +194,61 @@
       <span class="sync-pill" id="sync-pill">✓ saved</span>
     </div>
     <p class="sub">Rate each student 1–4 on all five categories.</p>
+    <div class="rubric-toggle" onclick="toggleRubric()">
+      <span>View scoring rubric</span>
+      <span id="rubric-arrow">▸</span>
+    </div>
+    <div id="rubric-panel" style="display:none;margin-top:8px">
+      <div class="rubric-table-wrap">
+        <table class="rubric-table">
+          <thead>
+            <tr>
+              <th>Score</th>
+              <th>Integration with Focused Study</th>
+              <th>Project &amp; Concept</th>
+              <th>Process</th>
+              <th>Outcomes</th>
+              <th>Reflection</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="score-cell s1">1</td>
+              <td>Does not adequately demonstrate how the project emerged from focused study or artistic journey at Oberlin.</td>
+              <td>Poorly researched; no demonstrated awareness of traditions the student was working within.</td>
+              <td>Disorganized; did not adhere to the project outline.</td>
+              <td>Showed minimal growth in the student's work.</td>
+              <td>Disorganized, lacking direction; no thoughtful reflection or in-depth insight; weak writing voice.</td>
+            </tr>
+            <tr>
+              <td class="score-cell s2">2</td>
+              <td>Shows how the project emerged from focused study but lacks depth or clarity.</td>
+              <td>Adequately researched; demonstrated awareness of traditions the student was working within.</td>
+              <td>Well-organized and adhered to the project outline.</td>
+              <td>Demonstrated significant growth and realized the student's intended artistic and academic goals.</td>
+              <td>Clear and thoughtful but lacked in-depth insight or a strong sense of direction and flow.</td>
+            </tr>
+            <tr>
+              <td class="score-cell s3">3</td>
+              <td>Clear and thorough understanding of how the project emerged from focused study and builds on artistic journey at Oberlin.</td>
+              <td>Aligned with artistic and academic goals; integrated aspects of focused study.</td>
+              <td>Supported the final project; consistent work habits; willingness to take risks; navigated challenges; worked well with collaborators; allowed time for revision.</td>
+              <td>Positioned student for engaging with the field post-graduation; showed exceptional potential for future development.</td>
+              <td>Thoughtful reflection, in-depth insight, clarity, strong direction and logical flow; strong personal writing voice.</td>
+            </tr>
+            <tr>
+              <td class="score-cell s4">4</td>
+              <td>Exceptional understanding; represents a culmination of artistic journey at Oberlin; pushes boundaries with exceptional creativity and originality.</td>
+              <td>Clear, innovative, and creative point of view.</td>
+              <td>Exceptional work habits and proactive problem-solving; consistently went above and beyond in collaborating and seeking feedback.</td>
+              <td>Exceptional; significant growth, realization of goals, pushes boundaries within the field with exceptional creativity and originality.</td>
+              <td>Outstanding clarity and insight; strong direction and flow; creative and original writing voice that pushes boundaries within the field.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div style="margin-top:1.25rem"></div>
     <div class="progress-strip" id="prog-strip"></div>
     <div class="student-tabs" id="student-tabs"></div>
     <div id="scoring-card-area"></div>
@@ -265,6 +330,15 @@ async function upsertScore(year, faculty, student, category, score) {
 function isFacultyDone(faculty, students, scores) {
   if (!students.length) return false;
   return students.every(s => CATS.every(c => scores.some(r => r.faculty===faculty && r.student===s.name && r.category===c)));
+}
+
+/* ── RUBRIC ── */
+function toggleRubric() {
+  const panel = document.getElementById('rubric-panel');
+  const arrow = document.getElementById('rubric-arrow');
+  const open = panel.style.display === 'none';
+  panel.style.display = open ? 'block' : 'none';
+  arrow.textContent = open ? '▾' : '▸';
 }
 
 /* ── YEARS ── */
